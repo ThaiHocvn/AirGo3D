@@ -14,6 +14,7 @@ import {
   LabelList,
 } from "recharts";
 import { usePanoramaStats } from "graphql/hooks/usePanoramaStats";
+import { useBreakpoint } from "hooks/useBreakpoint";
 
 type PieLabelProps = {
   name: string;
@@ -32,6 +33,7 @@ type PieLabelProps = {
 const COLORS = ["#16A34A", "#7C3AED", "#2563EB"];
 
 const AnalyticsChart = () => {
+  const { isMobile, isSmallMobile } = useBreakpoint();
   const { stats } = usePanoramaStats();
 
   const pieData = [
@@ -76,76 +78,107 @@ const AnalyticsChart = () => {
   };
 
   return (
-    <Card title="Panorama Statistics" className="my-4">
+    <Card
+      title="Panorama Statistics"
+      className="my-4 shadow-sm rounded-xl"
+      styles={{
+        body: { padding: isMobile ? "10px" : "16px" },
+      }}
+    >
       <Row gutter={16}>
-        <Col span={12}>
-          <h3 className="text-lg font-semibold text-gray-700">
+        <Col xs={24} sm={24} md={12}>
+          <h3 className="text-lg font-semibold text-gray-700 ml-2">
             Bookmark Distribution
           </h3>
-          <ResponsiveContainer width="100%" height={300}>
-            <PieChart>
-              <Pie
-                data={pieData}
-                cx="50%"
-                cy="50%"
-                innerRadius={50}
-                outerRadius={90}
-                paddingAngle={3}
-                dataKey="value"
-                stroke="#fff"
-                strokeWidth={2}
-                label={renderLabel}
-                labelLine={false}
-              >
-                {pieData.map((entry, index) => (
-                  <Cell key={index} fill={COLORS[index % COLORS.length]} />
-                ))}
-              </Pie>
-
-              <Tooltip
-                contentStyle={{
-                  borderRadius: "8px",
-                  padding: "6px 10px",
-                  border: "1px solid #e5e7eb",
-                }}
-              />
-
-              <Legend
-                verticalAlign="bottom"
-                height={32}
-                formatter={(value) => (
-                  <span className="text-gray-700 font-medium">{value}</span>
-                )}
-              />
-            </PieChart>
-          </ResponsiveContainer>
-        </Col>
-        <Col span={12}>
-          <h3 className="text-lg font-semibold text-gray-700">Overview</h3>
-          <ResponsiveContainer width="100%" height={300}>
-            <BarChart
-              data={barData}
-              margin={{ top: 20, right: 20, left: 0, bottom: 10 }}
-            >
-              <XAxis dataKey="name" />
-              <YAxis allowDecimals={false} />
-              <Tooltip />
-              <Legend />
-              <Bar dataKey="value" radius={[10, 10, 0, 0]} fill="url(#colorUv)">
-                <LabelList
+          <div className="w-full h-[260px] sm:h-[300px]">
+            <ResponsiveContainer width="100%" height="100%">
+              <PieChart margin={{ left: 40, right: 40, top: 20, bottom: 20 }}>
+                <Pie
+                  data={pieData}
+                  cx="50%"
+                  cy="50%"
+                  innerRadius={50}
+                  outerRadius={90}
+                  paddingAngle={3}
                   dataKey="value"
-                  position="top"
-                  style={{ fill: "#333", fontSize: 14, fontWeight: 600 }}
+                  stroke="#fff"
+                  strokeWidth={2}
+                  label={!isMobile ? renderLabel : undefined}
+                  labelLine={false}
+                >
+                  {pieData.map((entry, index) => (
+                    <Cell key={index} fill={COLORS[index % COLORS.length]} />
+                  ))}
+                </Pie>
+                <Tooltip
+                  contentStyle={{
+                    borderRadius: "8px",
+                    padding: "6px 10px",
+                    border: "1px solid #e5e7eb",
+                  }}
                 />
-              </Bar>
-              <defs>
-                <linearGradient id="colorUv" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor="#6366f1" stopOpacity={0.9} />
-                  <stop offset="100%" stopColor="#818cf8" stopOpacity={0.6} />
-                </linearGradient>
-              </defs>
-            </BarChart>
-          </ResponsiveContainer>
+
+                <Legend
+                  layout="horizontal"
+                  verticalAlign="bottom"
+                  align="center"
+                  wrapperStyle={{
+                    display: "flex",
+                    justifyContent: "center",
+                    gap: "20px",
+                    whiteSpace: "nowrap",
+                  }}
+                  formatter={(value) => (
+                    <span className="text-gray-700 font-medium">{value}</span>
+                  )}
+                />
+
+                <Tooltip />
+              </PieChart>
+            </ResponsiveContainer>
+          </div>
+        </Col>
+        <Col xs={24} sm={24} md={12}>
+          <h3 className="text-lg font-semibold text-gray-700">Overview</h3>
+          <div className="w-full min-w-[320px] h-[240px]">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart
+                data={barData}
+                margin={{ top: 10, right: 10, left: 0, bottom: 0 }}
+                barCategoryGap="15%"
+                barGap={8}
+              >
+                <XAxis dataKey="name" tick={{ fontSize: isMobile ? 10 : 12 }} />
+                <YAxis
+                  allowDecimals={false}
+                  tick={{ fontSize: isMobile ? 10 : 12 }}
+                />
+
+                <Bar
+                  dataKey="value"
+                  radius={[8, 8, 0, 0]}
+                  fill="url(#gradient)"
+                >
+                  <LabelList
+                    dataKey="value"
+                    position="top"
+                    style={{
+                      fill: "#111",
+                      fontSize: isMobile ? 10 : 13,
+                      fontWeight: 600,
+                    }}
+                  />
+                </Bar>
+
+                <defs>
+                  <linearGradient id="gradient" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor="#6366f1" stopOpacity={0.95} />
+                    <stop offset="100%" stopColor="#818cf8" stopOpacity={0.6} />
+                  </linearGradient>
+                </defs>
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
         </Col>
       </Row>
     </Card>

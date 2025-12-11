@@ -111,12 +111,13 @@ export default function PanoramaTable() {
     {
       title: "Preview",
       dataIndex: "thumbnailPath",
+      responsive: ["xs", "sm", "md", "lg"],
       render: (thumbnailPath: string, record) =>
         thumbnailPath ? (
           <img
             src={thumbnailPath}
             alt={record.name}
-            className="w-[100px] h-[60px] object-cover rounded-md cursor-pointer transition-transform duration-200 hover:scale-105"
+            className="w-[80px] h-[50px] sm:w-[100px] sm:h-[60px] object-cover rounded-md cursor-pointer transition-transform duration-200 hover:scale-105"
             onClick={() => onViewPanorama(record)}
           />
         ) : (
@@ -125,22 +126,29 @@ export default function PanoramaTable() {
           </div>
         ),
     },
-    { title: "Name", dataIndex: "name" },
+    { title: "Name", dataIndex: "name", responsive: ["xs", "sm", "md", "lg"] },
 
     {
       title: "Size",
       dataIndex: "size",
+      responsive: ["md"],
       render: (size: number) => <span>{formatFileSize(size)}</span>,
     },
-    { title: "Type", dataIndex: "mimeType" },
+    {
+      title: "Type",
+      dataIndex: "mimeType",
+      responsive: ["lg"],
+    },
     {
       title: "Created at",
       dataIndex: "createdAt",
+      responsive: ["sm", "md", "lg"],
       render: (createdAt: Date) => <span>{formatDate(createdAt)}</span>,
     },
     {
       title: "Status",
       dataIndex: "isBookmarked",
+      responsive: ["sm", "md", "lg"],
       render: (isBookmarked: boolean) => (
         <Tag color={isBookmarked ? "geekblue" : "default"}>
           {isBookmarked ? "Bookmarked" : "Bookmark"}
@@ -149,6 +157,7 @@ export default function PanoramaTable() {
     },
     {
       title: "Action",
+      responsive: ["xs", "sm", "md", "lg"],
       render: (_, record) => (
         <Space>
           <Button
@@ -223,8 +232,8 @@ export default function PanoramaTable() {
     <Row>
       <Col xs={24}>
         <Card title="Panorama images">
-          <Space className="mb-3 flex justify-between items-center">
-            <div className="flex items-center gap-3">
+          <div className="mb-3 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
               <Input.Search
                 placeholder="Search name"
                 value={searchQuery}
@@ -243,10 +252,14 @@ export default function PanoramaTable() {
               </div>
             </div>
 
-            <Button type="primary" onClick={() => setUploadModalVisible(true)}>
+            <Button
+              type="primary"
+              className="w-full sm:w-auto"
+              onClick={() => setUploadModalVisible(true)}
+            >
               Upload image
             </Button>
-          </Space>
+          </div>
 
           <Modal
             title="Upload image"
@@ -308,19 +321,21 @@ export default function PanoramaTable() {
             />
           )}
 
-          <Datatable
-            columns={columns}
-            data={panoramas}
-            loading={loading}
-            pagination={{
-              current: page + 1,
-              pageSize: limit,
-              total: total,
-              showTotal: (total, range) =>
-                `${range[0]}-${range[1]} of ${total} items`,
-            }}
-            onChange={onTableChange}
-          />
+          <div className="overflow-x-auto">
+            <Datatable
+              columns={columns}
+              data={panoramas}
+              loading={loading}
+              pagination={{
+                current: page + 1,
+                pageSize: limit,
+                total: total,
+                showTotal: (total, range) =>
+                  `${range[0]}-${range[1]} of ${total} items`,
+              }}
+              onChange={onTableChange}
+            />
+          </div>
         </Card>
       </Col>
     </Row>
