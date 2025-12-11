@@ -18,12 +18,13 @@ export const GET_PANORAMAS = gql`
         name
         filename
         originalName
-        path
         size
         mimeType
         width
         height
         isBookmarked
+        previewPath
+        thumbnailPath
         previewUrl
         thumbnailUrl
         createdAt
@@ -51,7 +52,6 @@ export const UPLOAD_PANORAMA = gql`
       name
       filename
       originalName
-      path
       size
       mimeType
       isBookmarked

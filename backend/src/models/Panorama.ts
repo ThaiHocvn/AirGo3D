@@ -4,7 +4,7 @@ export interface IPanorama extends Document {
   name: string;
   filename: string;
   originalName: string;
-  path: string;
+  previewPath: string;
   thumbnailPath: string;
   size: number;
   mimeType: string;
@@ -22,7 +22,7 @@ const panoramaSchema = new Schema(
     name: { type: String, required: true },
     filename: { type: String, required: true },
     originalName: { type: String, required: true },
-    path: { type: String, required: true },
+    previewPath: { type: String, required: true },
     thumbnailPath: { type: String, required: true },
     size: { type: Number, required: true },
     mimeType: { type: String, required: true },

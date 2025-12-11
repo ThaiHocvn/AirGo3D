@@ -3,6 +3,9 @@ node_modules/**/*
 yarn-error.log
 build/
 .env
+.env.development
+.env.production
+.env.staging
 *.log
 coverage/
 .nyc_output/

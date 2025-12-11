@@ -6,6 +6,8 @@ import sharp from "sharp";
 import logger from "../logger";
 import Panorama from "../models/Panorama";
 import { deleteFile, uploadDir } from "../utils/fileUpload";
+import { validateUpload } from "../middlewares/validateUpload";
+import { BUCKET, minioClient } from "../minioClient";
 
 const DateScalar = new GraphQLScalarType<Date, string>({
   name: "Date",
@@ -44,63 +46,61 @@ const JSONScalar = new GraphQLScalarType({
   },
 });
 
-const saveUploadedFile = async (
-  file: any
-): Promise<{
-  filename: string;
-  path: string;
-  thumbnailPath: string;
-  size: number;
-  mimeType: string;
-  originalName: string;
-}> => {
+export const saveUploadedFile = async (file: any) => {
   const upload = await file;
   const { createReadStream, filename, mimetype } = upload;
 
   const uniqueSuffix = Date.now();
   const ext = path.extname(filename);
   const newFilename = `panorama-${uniqueSuffix}${ext}`;
-  const filePath = path.join(uploadDir, newFilename);
+  const thumbnailName = `panorama-${uniqueSuffix}-thumbnail${ext}`;
 
-  // Save original file using pipe (no more locked file!)
-  const size = await new Promise<number>((resolve, reject) => {
-    const rs = createReadStream();
-    const ws = fs.createWriteStream(filePath);
+  // Read file stream into buffer
+  const stream = createReadStream();
+  const chunks: Buffer[] = [];
 
-    let totalSize = 0;
-
-    rs.on("data", (chunk: Buffer) => {
-      totalSize += chunk.length;
-    });
-
-    rs.pipe(ws);
-
-    ws.on("finish", () => resolve(totalSize));
-    ws.on("error", reject);
-    rs.on("error", reject);
+  const buffer: Buffer = await new Promise((resolve, reject) => {
+    stream.on("data", (chunk: Buffer) => chunks.push(chunk));
+    stream.on("end", () => resolve(Buffer.concat(chunks)));
+    stream.on("error", reject);
   });
 
-  // Generate thumbnail
-  const thumbnailPath = path.join(
-    uploadDir,
-    `panorama-${uniqueSuffix}-thumbnail${ext}`
+  const size = buffer.length;
+
+  // Upload original file to MinIO
+  await minioClient.putObject(BUCKET, `uploads/${newFilename}`, buffer, size, {
+    "Content-Type": mimetype,
+  });
+
+  // Create thumbnail
+  const thumbnailBuffer = await sharp(buffer)
+    .resize(200)
+    .jpeg({ quality: 80 })
+    .toBuffer();
+
+  await minioClient.putObject(
+    BUCKET,
+    `uploads/${thumbnailName}`,
+    thumbnailBuffer,
+    thumbnailBuffer.length,
+    { "Content-Type": "image/jpeg" }
   );
 
-  await sharp(filePath)
-    .resize(200, null, { withoutEnlargement: true })
-    .jpeg({ quality: 80 })
-    .toFile(thumbnailPath);
-
-  // Clear sharp cache to avoid Windows file lock
-  sharp.cache(false);
-
+  // URLs
+  const base = process.env.MINIO_PUBLIC_URL;
+  const previewUrl = `${base}/${BUCKET}/uploads/${newFilename}`;
+  const thumbnailUrl = `${base}/${BUCKET}/uploads/${thumbnailName}`;
+  const previewPath = `${process.env.SERVER_URL}/api/image-preview/${newFilename}`;
+  const thumbnailPath = `${process.env.SERVER_URL}/api/image-thumbnail/${thumbnailName}`;
   return {
     filename: newFilename,
-    path: filePath,
-    thumbnailPath,
-    size,
-    mimeType: mimetype,
     originalName: filename,
+    mimeType: mimetype,
+    size,
+    previewPath,
+    thumbnailPath,
+    previewUrl,
+    thumbnailUrl,
   };
 };
 
@@ -108,15 +108,6 @@ export const resolvers = {
   Upload: GraphQLUpload,
   Date: DateScalar,
   JSON: JSONScalar,
-
-  Panorama: {
-    previewUrl: (parent: any) =>
-      parent.previewUrl ||
-      `${process.env.SERVER_URL}/api/image-preview/${parent.filename}`,
-    thumbnailUrl: (parent: any) =>
-      parent.thumbnailUrl ||
-      `${process.env.SERVER_URL}/api/image-thumbnail/${parent.filename}`,
-  },
 
   Query: {
     panoramas: async (
@@ -189,21 +180,20 @@ export const resolvers = {
     ): Promise<any> => {
       const { file, name } = args;
       try {
-        const fileData = await saveUploadedFile(file);
+        await validateUpload(file, name);
 
-        const previewUrl = `${process.env.SERVER_URL}/api/image-preview/${fileData.filename}`;
-        const thumbnailUrl = `${process.env.SERVER_URL}/api/image-thumbnail/${fileData.filename}`;
+        const fileData = await saveUploadedFile(file);
 
         const panorama = new Panorama({
           name,
           filename: fileData.filename,
           originalName: fileData.originalName,
+          previewPath: fileData.previewPath,
           thumbnailPath: fileData.thumbnailPath,
-          path: fileData.path,
           size: fileData.size,
           mimeType: fileData.mimeType,
-          previewUrl,
-          thumbnailUrl,
+          previewUrl: fileData.previewUrl,
+          thumbnailUrl: fileData.thumbnailUrl,
         });
 
         await panorama.save();

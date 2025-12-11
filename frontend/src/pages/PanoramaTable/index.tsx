@@ -27,7 +27,7 @@ import { useUploadPanorama } from "graphql/hooks/useUploadPanorama";
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { PanoramaState } from "store/slices/panoramaSlice";
-import { formatDate, formatFileSize } from "utils/utils";
+import { formatDate, formatFileSize, validateUploadImage } from "utils/utils";
 import { usePanoramas } from "../../graphql/hooks/usePanoramas";
 import PanoramaViewerModal from "./PanoramaViewerModal";
 import { useDownloadPanorama } from "graphql/hooks/useDownloadPanorama";
@@ -97,7 +97,7 @@ export default function PanoramaTable() {
   };
 
   const onViewPanorama = (record: any) => {
-    setModalSrc({ url: record.previewUrl, name: record.name });
+    setModalSrc({ url: record.previewPath, name: record.name });
     setModalPanorama(true);
   };
 
@@ -110,11 +110,11 @@ export default function PanoramaTable() {
   const columns: ColumnsType<any> = [
     {
       title: "Preview",
-      dataIndex: "thumbnailUrl",
-      render: (thumbnailUrl: string, record) =>
-        thumbnailUrl ? (
+      dataIndex: "thumbnailPath",
+      render: (thumbnailPath: string, record) =>
+        thumbnailPath ? (
           <img
-            src={thumbnailUrl}
+            src={thumbnailPath}
             alt={record.name}
             className="w-[100px] h-[60px] object-cover rounded-md cursor-pointer transition-transform duration-200 hover:scale-105"
             onClick={() => onViewPanorama(record)}
@@ -126,12 +126,13 @@ export default function PanoramaTable() {
         ),
     },
     { title: "Name", dataIndex: "name" },
-    { title: "Type", dataIndex: "mimeType" },
+
     {
       title: "Size",
       dataIndex: "size",
       render: (size: number) => <span>{formatFileSize(size)}</span>,
     },
+    { title: "Type", dataIndex: "mimeType" },
     {
       title: "Created at",
       dataIndex: "createdAt",
@@ -162,7 +163,7 @@ export default function PanoramaTable() {
             loading={downloadingId === record.id}
             disabled={downloadingId === record.id}
             onClick={() =>
-              handleDownload(record.id, record.previewUrl, record.originalName)
+              handleDownload(record.id, record.previewPath, record.originalName)
             }
           />
 
@@ -190,6 +191,7 @@ export default function PanoramaTable() {
 
     try {
       setUploading(true);
+      validateUploadImage(selectedFile);
       message.loading({ content: "Uploading...", key: "upload" });
 
       await upload({
@@ -205,9 +207,13 @@ export default function PanoramaTable() {
       setSelectedFile(null);
       setPreviewUrl("");
       refetch();
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
-      message.error({ content: "Upload failed", key: "upload", duration: 2 });
+      message.error({
+        content: err.message,
+        key: "upload",
+        duration: 2,
+      });
     } finally {
       setUploading(false);
     }

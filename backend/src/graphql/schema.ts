@@ -10,7 +10,8 @@ export const typeDefs = gql`
     name: String!
     filename: String!
     originalName: String!
-    path: String!
+    previewPath: String!
+    thumbnailPath: String!
     size: Int!
     mimeType: String!
     width: Int

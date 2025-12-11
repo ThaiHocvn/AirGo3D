@@ -2,6 +2,7 @@ import multer from "multer";
 import * as path from "path";
 import * as fs from "fs";
 import logger from "../logger";
+import { BUCKET, minioClient } from "../minioClient";
 
 const uploadDir = process.env.UPLOAD_DIR || path.join(process.cwd(), "uploads");
 
@@ -50,40 +51,27 @@ export const getFilePath = (filename: string): string => {
   return path.join(uploadDir, filename);
 };
 
-export const deleteFile = (filename: string): Promise<void> => {
-  return new Promise((resolve, reject) => {
-    const filePath = getFilePath(filename);
+export const deleteFile = async (filename: string): Promise<void> => {
+  const ext = filename.substring(filename.lastIndexOf("."));
+  const base = filename.replace(ext, "");
+  const thumbnailName = `${base}-thumbnail${ext}`;
 
-    const ext = path.extname(filename);
-    const base = filename.replace(ext, "");
-    const thumbnailName = `${base}-thumbnail${ext}`;
-    const thumbnailPath = getFilePath(thumbnailName);
+  const filePath = `uploads/${filename}`;
+  const thumbnailPath = `uploads/${thumbnailName}`;
 
-    let errorOccurred = false;
-
-    const handleError = (err: any) => {
-      if (!errorOccurred) {
-        errorOccurred = true;
-        logger.error(`Error deleting file(s):`, err);
-        reject(err);
-      }
-    };
-
-    fs.unlink(filePath, (err) => {
-      if (err && err.code !== "ENOENT") return handleError(err);
-
-      logger.info(`File deleted: ${filename}`);
-
-      fs.unlink(thumbnailPath, (thumbErr) => {
-        if (thumbErr && thumbErr.code !== "ENOENT")
-          return handleError(thumbErr);
-
-        logger.info(`Thumbnail deleted: ${thumbnailName}`);
-
-        resolve();
-      });
-    });
+  const p1 = minioClient.removeObject(BUCKET, filePath).catch((err: any) => {
+    if (err.code !== "NoSuchKey") throw err;
+    console.warn(`Main file not found: ${filePath}`);
   });
+
+  const p2 = minioClient
+    .removeObject(BUCKET, thumbnailPath)
+    .catch((err: any) => {
+      if (err.code !== "NoSuchKey") throw err;
+      console.warn(`Thumbnail not found: ${thumbnailPath}`);
+    });
+
+  await Promise.all([p1, p2]);
 };
 
 export { uploadDir };

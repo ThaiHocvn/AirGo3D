@@ -12,3 +12,11 @@ export const formatDate = (date: string | Date) => {
   if (isNaN(d.getTime())) return "Invalid Date";
   return d.toLocaleDateString() + " " + d.toLocaleTimeString();
 };
+
+export const validateUploadImage = (file: File) => {
+  if (!file) throw new Error("File is required");
+
+  if (!file.type || !file.type.startsWith("image/")) {
+    throw new Error("Only image files are allowed");
+  }
+};

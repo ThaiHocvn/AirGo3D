@@ -1,6 +1,4 @@
-# AirGo3D – Panorama Management System
-
-A full-stack 360° panorama management platform, including image upload, browsing, search, bookmarking, analytics, and a 360° viewer built with Three.js. The system is powered by a GraphQL API (Apollo Server), Node.js backend, and a modern React + TypeScript frontend.
+# AirGo3D – Airsquire fullstack engineer interview project
 
 ---
 
