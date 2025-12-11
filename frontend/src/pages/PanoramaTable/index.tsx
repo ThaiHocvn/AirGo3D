@@ -37,7 +37,7 @@ export default function PanoramaTable() {
   const { upload } = useUploadPanorama();
   const { toggle, loading: loadingToggle } = useToggleBookmark();
   const { deletePanorama, loading: loadingDelete } = useDeletePanorama();
-  const { download, loading: loadingDownload } = useDownloadPanorama();
+  const { download } = useDownloadPanorama();
 
   const loading = useSelector((state: RootState) => state.panorama.loading);
 
@@ -49,6 +49,7 @@ export default function PanoramaTable() {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string>("");
   const [uploading, setUploading] = useState(false);
+  const [downloadingId, setDownloadingId] = useState<null | string>(null);
   const [modalPanorama, setModalPanorama] = useState(false);
   const [modalSrc, setModalSrc] = useState({ url: "", name: "" });
 
@@ -98,6 +99,12 @@ export default function PanoramaTable() {
   const onViewPanorama = (record: any) => {
     setModalSrc({ url: record.previewUrl, name: record.name });
     setModalPanorama(true);
+  };
+
+  const handleDownload = async (id: string, url: string, name: string) => {
+    setDownloadingId(id);
+    await download(url, name);
+    setDownloadingId(null);
   };
 
   const columns: ColumnsType<any> = [
@@ -152,9 +159,11 @@ export default function PanoramaTable() {
           <Button
             type="link"
             icon={<DownloadOutlined />}
-            loading={loadingDownload}
-            onClick={() => download(record.previewUrl, record.originalName)}
-            disabled={loading}
+            loading={downloadingId === record.id}
+            disabled={downloadingId === record.id}
+            onClick={() =>
+              handleDownload(record.id, record.previewUrl, record.originalName)
+            }
           />
 
           <Button
