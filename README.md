@@ -4,6 +4,9 @@ A full-stack 360° panorama management platform, including image upload, browsin
 
 ---
 
+- [Demo Video](video/demo.mp4)
+  ![Dashboard](screenshots/UI.png)
+
 ## ✨ Features
 
 ### 🔹 Core Features
