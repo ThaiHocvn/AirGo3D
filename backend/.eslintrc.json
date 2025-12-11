@@ -1,0 +1,26 @@
+{
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "ecmaVersion": 2020,
+    "sourceType": "module"
+  },
+  "extends": [
+    "plugin:@typescript-eslint/recommended",
+    "plugin:node/recommended"
+  ],
+  "settings": {
+    "node": {
+      "tryExtensions": [".js", ".jsx", ".ts", ".tsx"],
+      "resolvePaths": ["./node_modules"]
+    }
+  },
+  "rules": {
+    "node/no-unsupported-features/es-syntax": ["error", { "ignores": ["modules"] }],
+    "node/no-missing-import": ["error", {
+      "allowModules": ["graphql-upload"],
+      "tryExtensions": [".js", ".jsx", ".ts", ".tsx", ".json"]
+    }],
+    "@typescript-eslint/explicit-function-return-type": "off",
+    "@typescript-eslint/no-explicit-any": "off"
+  }
+}

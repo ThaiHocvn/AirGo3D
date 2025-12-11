@@ -1,0 +1,43 @@
+version: "3.8"
+
+services:
+  mongodb:
+    image: mongo:7
+    container_name: airgo3d-mongodb
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+    environment:
+      MONGO_INITDB_DATABASE: airgo3d
+    networks:
+      - airgo3d-network
+
+  app:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    container_name: airgo3d-backend
+    ports:
+      - "4000:4000"
+    volumes:
+      - ./uploads:/opt/app/uploads
+      - ./logs:/opt/app/logs
+    environment:
+      NODE_ENV: production
+      PORT: 4000
+      MONGODB_URI: mongodb://mongodb:27017/airgo3d
+      LOG_LEVEL: info
+      LOG_PATH: /opt/app/logs/app.log
+      UPLOAD_DIR: /opt/app/uploads
+    depends_on:
+      - mongodb
+    networks:
+      - airgo3d-network
+
+volumes:
+  mongodb_data:
+
+networks:
+  airgo3d-network:
+    driver: bridge
