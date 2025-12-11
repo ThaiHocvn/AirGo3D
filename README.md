@@ -56,34 +56,6 @@ A full-stack 360° panorama management platform, including image upload, browsin
 
 ---
 
-## 📁 Project Structure
-
-AirGo3D/
-├── backend/
-│ ├── src/
-│ │ ├── config/ # DB config, env
-│ │ ├── models/ # MongoDB models
-│ │ ├── graphql/ # Schema + resolvers
-│ │ ├── utils/ # Upload, logger, helpers
-│ │ ├── app.ts # Express app setup
-│ │ └── server.ts # App entry point
-│ ├── uploads/ # Uploaded panorama files
-│ ├── logs/ # Winston logs
-│ ├── Dockerfile
-│ └── docker-compose.yml
-│
-└── frontend/
-├── src/
-│ ├── components/ # UI components
-│ ├── pages/ # Page-level components
-│ ├── store/ # Redux store & slices
-│ ├── graphql/ # Queries & mutations
-│ ├── config/ # Apollo config
-│ └── App.tsx
-└── webpack/ # Webpack config
-
----
-
 ## 🚀 Getting Started
 
 ### Prerequisites
@@ -122,16 +94,12 @@ docker-compose up
 
 
 Starts:
-
 MongoDB @ 27017
-
 Backend API @ 4000
 
 Frontend:
-
 cd ../frontend
 yarn start
-
 
 Frontend dev server:
 ➡ http://localhost:8080
@@ -140,7 +108,6 @@ Option B — Run Manually
 Backend
 cd backend
 yarn dev
-
 
 API: http://localhost:4000/graphql
 
@@ -171,47 +138,31 @@ GraphQL Endpoint
 http://localhost:4000/graphql
 
 Main Queries
-
 panoramas(search, isBookmarked, limit, offset)
-
 panoramaStats
 
 Main Mutations
-
 uploadPanorama(file, name)
-
 deletePanorama(id)
-
 toggleBookmark(id)
 
 REST Endpoints
-
 GET api/image-preview/:id
-
 GET api/image-thumbnail/:id
 
 🐳 Docker Deployment
-
 From backend folder:
-
 docker-compose up -d
 
 
 Creates:
-
 MongoDB container
-
 Backend container
-
 Volumes for uploads & logs
 
 📝 Notes
-
 Use equirectangular (2:1) images for best 360° results
-
 Supported formats: JPEG, PNG, WebP
-
 Max file size: 100MB
-
 Logs stored in MongoDB + Winston logs folder
 ```
