@@ -140,7 +140,7 @@ const AnalyticsChart = () => {
         </Col>
         <Col xs={24} sm={24} md={12}>
           <h3 className="text-lg font-semibold text-gray-700">Overview</h3>
-          <div className="w-full min-w-[320px] h-[240px]">
+          <div className="w-full min-w-[320px] h-[240px] md:ml-0 ml-[-50px]">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart
                 data={barData}

@@ -188,7 +188,7 @@ export default function PanoramaViewerModal({
           </div>
         )} */}
 
-        <div className="absolute z-40 left-4 top-4 text-black text-sm p-2 rounded-md">
+        <div className="absolute z-40 left-4 top-4 text-white text-sm px-3 py-1 rounded-md bg-black/50 backdrop-blur-sm">
           {src?.name || "Panorama View"}
         </div>
 
