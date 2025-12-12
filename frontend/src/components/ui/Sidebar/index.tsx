@@ -2,6 +2,7 @@ import React from "react";
 import { Layout, Menu } from "antd";
 import { DashboardOutlined, TableOutlined } from "@ant-design/icons";
 import { useNavigate, useLocation } from "react-router-dom";
+import logo from "../../../assets/logo.png";
 
 const { Sider } = Layout;
 
@@ -36,7 +37,7 @@ export default function Sidebar({ collapsed }: { collapsed: boolean }) {
         className="flex items-center justify-start gap-2 text-[20px] text-center font-bold m-3 pl-3 w-full cursor-pointer"
         onClick={() => navigate("/")}
       >
-        <img src="/logo.png" alt="Logo" className="w-8 h-8" />
+        <img src={logo} alt="Logo" className="w-8 h-8" />
         AirGo3D
       </div>
       <Menu

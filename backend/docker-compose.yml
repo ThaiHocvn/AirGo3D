@@ -1,43 +1,41 @@
-version: "3.8"
+version: "3.9"
 
 services:
-  mongodb:
-    image: mongo:7
-    container_name: airgo3d-mongodb
+  mongo:
+    image: mongo:5.0
+    container_name: airgo-mongo
+    restart: always
     ports:
       - "27017:27017"
     volumes:
-      - mongodb_data:/data/db
-    environment:
-      MONGO_INITDB_DATABASE: airgo3d
-    networks:
-      - airgo3d-network
+      - mongo_data:/data/db
 
-  app:
-    build:
-      context: .
-      dockerfile: ./Dockerfile
-    container_name: airgo3d-backend
+  minio:
+    image: minio/minio
+    container_name: airgo-minio
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    volumes:
+      - minio_data:/data
+
+  backend:
+    build: .
+    container_name: airgo-backend
+    restart: always
+    depends_on:
+      - mongo
+      - minio
+    environment:
+      NODE_ENV: development
+      MONGO_URI: mongodb://mongo:27017/airgo
     ports:
       - "4000:4000"
-    volumes:
-      - ./uploads:/opt/app/uploads
-      - ./logs:/opt/app/logs
-    environment:
-      NODE_ENV: production
-      PORT: 4000
-      MONGODB_URI: mongodb://mongodb:27017/airgo3d
-      LOG_LEVEL: info
-      LOG_PATH: /opt/app/logs/app.log
-      UPLOAD_DIR: /opt/app/uploads
-    depends_on:
-      - mongodb
-    networks:
-      - airgo3d-network
 
 volumes:
-  mongodb_data:
-
-networks:
-  airgo3d-network:
-    driver: bridge
+  mongo_data:
+  minio_data:

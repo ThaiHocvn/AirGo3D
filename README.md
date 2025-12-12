@@ -103,7 +103,7 @@ cd ../frontend
 yarn start
 
 Frontend dev server:
-➡ http://localhost:8080
+➡ http://localhost:3000
 
 Option B — Run Manually
 Backend
@@ -117,7 +117,7 @@ cd frontend
 yarn start
 
 
-UI: http://localhost:8080
+UI: http://localhost:3000
 
 🧪 Testing
 Backend tests

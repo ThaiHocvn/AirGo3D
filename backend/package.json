@@ -3,14 +3,14 @@
   "version": "1.0.0",
   "main": "server.ts",
   "scripts": {
-    "start": "pm2 start ecosystem.config.js && pm2 log",
+    "start": "node build/server.js",
     "dev": "npx nodemon",
     "build": "rm -rf ./build && tsc",
     "lint": "eslint ./src/**/*.ts -c .eslintrc.json",
     "test": "jest",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
-    "up": "docker-compose up"
+    "up": "docker compose up -d --build"
   },
   "dependencies": {
     "@apollo/server": "4",

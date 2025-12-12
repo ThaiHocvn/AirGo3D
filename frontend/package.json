@@ -6,11 +6,13 @@
   "scripts": {
     "start": "webpack serve --config ./webpack/webpack.dev.js --progress --profile",
     "build": "rimraf ./build && mkdir ./build && webpack --profile --progress --config ./webpack/webpack.prod.js",
+    "serve:prod": "serve -s build -l 3000",
     "test": "playwright test",
     "test:ui": "playwright test --ui",
     "test:headed": "playwright test --headed",
     "test:debug": "playwright test --debug",
-    "test:report": "playwright show-report"
+    "test:report": "playwright show-report",
+    "up": "docker compose up -d --build"
   },
   "dependencies": {
     "@ant-design/icons": "^5.2.6",
