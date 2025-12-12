@@ -9,7 +9,6 @@
 - Package manager: Yarn
 - Coding style and Linting: ESlint, editorconfig
 
-
 ## Lib
 
 - General Logger: winston

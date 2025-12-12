@@ -84,6 +84,7 @@ const AnalyticsChart = () => {
       styles={{
         body: { padding: isMobile ? "10px" : "16px" },
       }}
+      data-testid="chart-card"
     >
       <Row gutter={16}>
         <Col xs={24} sm={24} md={12}>

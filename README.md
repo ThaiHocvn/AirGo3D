@@ -94,16 +94,15 @@ cp .env.example .env
 ▶ Running the Project
 Option A — Using Docker (Recommended)
 cd backend
-docker-compose up
-
+yarn up
 
 Starts:
 MongoDB @ 27017
 Backend API @ 4000
 
 Frontend:
-cd ../frontend
-yarn start
+cd frontend
+yarn up
 
 Frontend dev server:
 ➡ http://localhost:3000

@@ -4,10 +4,10 @@ This directory contains end-to-end tests for the AirGo3D frontend application us
 
 ## Test Files
 
-- `example.spec.ts` - Basic smoke tests
-- `panorama-list.spec.ts` - Tests for the panorama list page
-- `panorama-viewer.spec.ts` - Tests for the panorama viewer page
-- `panorama-interactions.spec.ts` - Tests for user interactions (search, filter, bookmark, etc.)
+- `dashboard.spec.ts` - Tests the dashboard (overview, navigation, stats, widgets, etc.)
+- `panorama-table.spec.ts` - Tests the panorama list table (sorting, filtering, searching, pagination, actions)
+- `upload.spec.ts` - Tests the panorama upload flow (file selection, drag-and-drop, validation, upload success)
+- `viewer.spec.ts` - Tests the panorama viewer (360° interactions, hotspots, fullscreen, loading states, thumbnails)
 
 ## Running Tests
 
@@ -38,7 +38,7 @@ yarn test:debug
 ### Run specific test file
 
 ```bash
-yarn playwright test tests/panorama-list.spec.ts
+yarn playwright test tests/panorama-table.spec.ts
 ```
 
 ### Run tests in specific browser
@@ -84,9 +84,9 @@ Example:
 import { test, expect } from "@playwright/test";
 
 test.describe("My Feature", () => {
-  test("should do something", async ({ page }) => {
+  test("should display expected content", async ({ page }) => {
     await page.goto("/");
-    await expect(page.locator("text=Expected Text")).toBeVisible();
+    await expect(page.getByText("Expected Text")).toBeVisible();
   });
 });
 ```

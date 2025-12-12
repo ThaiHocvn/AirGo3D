@@ -1,7 +1,6 @@
+import * as fs from "fs";
 import multer from "multer";
 import * as path from "path";
-import * as fs from "fs";
-import logger from "../logger";
 import { BUCKET, minioClient } from "../minioClient";
 
 const uploadDir = process.env.UPLOAD_DIR || path.join(process.cwd(), "uploads");

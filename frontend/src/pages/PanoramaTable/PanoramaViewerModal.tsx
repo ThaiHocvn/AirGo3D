@@ -178,6 +178,7 @@ export default function PanoramaViewerModal({
         <button
           onClick={onClose}
           className="absolute z-40 top-4 right-4 text-black px-3 py-1 rounded-md shadow"
+          data-testid="viewer-close-btn"
         >
           <CloseOutlined />
         </button>
@@ -192,7 +193,10 @@ export default function PanoramaViewerModal({
           {src?.name || "Panorama View"}
         </div>
 
-        <div className="canvas-container w-full h-[100vh]">
+        <div
+          className="canvas-container w-full h-[100vh]"
+          data-testid="panorama-viewer"
+        >
           <Canvas
             gl={{
               antialias: true,

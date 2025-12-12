@@ -39,6 +39,9 @@ export default function CardsDashBoard() {
         hover:shadow-md transition-all duration-300
         flex justify-between items-center
       "
+          data-testid={`dashboard-card-${card.title
+            .toLowerCase()
+            .replace(/ /g, "-")}`}
         >
           <div>
             <div className="text-gray-500 text-sm">{card.title}</div>

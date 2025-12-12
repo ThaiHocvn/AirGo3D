@@ -119,6 +119,7 @@ export default function PanoramaTable() {
             alt={record.name}
             className="w-[80px] h-[50px] sm:w-[100px] sm:h-[60px] object-cover rounded-md cursor-pointer transition-transform duration-200 hover:scale-105"
             onClick={() => onViewPanorama(record)}
+            data-testid="preview-img"
           />
         ) : (
           <div className="h-[60px] flex items-center justify-center bg-gray-100 text-gray-500 text-xs rounded-md">
@@ -164,6 +165,7 @@ export default function PanoramaTable() {
             type="link"
             icon={record.isBookmarked ? <StarFilled /> : <StarOutlined />}
             onClick={() => handleUpdateBookmark(record.id, record.isBookmarked)}
+            data-testid={`btn-bookmark-${record.id}`}
           />
 
           <Button
@@ -174,6 +176,7 @@ export default function PanoramaTable() {
             onClick={() =>
               handleDownload(record.id, record.previewPath, record.originalName)
             }
+            data-testid={`btn-download-${record.id}`}
           />
 
           <Button
@@ -181,6 +184,7 @@ export default function PanoramaTable() {
             danger
             icon={<DeleteOutlined />}
             onClick={() => handleDelete(record.id)}
+            data-testid={`btn-delete-${record.id}`}
           />
         </Space>
       ),
@@ -240,6 +244,7 @@ export default function PanoramaTable() {
                 onChange={(e) => setSearchQuery(e.target.value)}
                 allowClear
                 className="max-w-[360px]"
+                data-testid="search-input"
               />
 
               <div>
@@ -248,6 +253,7 @@ export default function PanoramaTable() {
                   onChange={(v) => setBookmarkedOnly(v)}
                   checkedChildren="Bookmarked"
                   unCheckedChildren="Unbookmarked"
+                  data-testid="bookmark-switch"
                 />
               </div>
             </div>
@@ -256,6 +262,7 @@ export default function PanoramaTable() {
               type="primary"
               className="w-full sm:w-auto"
               onClick={() => setUploadModalVisible(true)}
+              data-testid="open-upload-modal"
             >
               Upload image
             </Button>
@@ -270,7 +277,10 @@ export default function PanoramaTable() {
               setSelectedFile(null);
               setPreviewUrl("");
             }}
-            okButtonProps={{ loading: uploading }}
+            okButtonProps={{
+              "data-testid": "upload-submit",
+              loading: uploading,
+            }}
           >
             <Upload.Dragger
               beforeUpload={(file: RcFile) => {
@@ -334,6 +344,7 @@ export default function PanoramaTable() {
                   `${range[0]}-${range[1]} of ${total} items`,
               }}
               onChange={onTableChange}
+              data-testid="panorama-table"
             />
           </div>
         </Card>
