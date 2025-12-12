@@ -5,7 +5,6 @@
 - [Demo Video](video/demo.mp4)
   ![Dashboard](screenshots/UI.png)
   ![Dashboard](screenshots/UI-2.png) ![Table](screenshots/UI-5.png)
-  ![Table](screenshots/UI-5.png)
   ![Table](screenshots/UI-3.png)
   ![Table](screenshots/UI-4.png)
 
